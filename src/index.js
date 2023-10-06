@@ -90,7 +90,7 @@ app.post("/admin/login", async (req, res) => {
   const admin = await Admin.findOne({ username, password });
 
   if (admin) {
-    const token = jwt.sign({ username, role: "user" }, secret, {
+    const token = jwt.sign({ username, role: "admin" }, secret, {
       expiresIn: "12h",
     });
     res.status(200).json({ message: "Logged in sucessfully", token });
@@ -98,6 +98,10 @@ app.post("/admin/login", async (req, res) => {
     res.status(403).send({ message: "Invalid username or password" });
   }
 });
+
+app.get("/admin/me", authenticateJwt, (req, res) => {
+  res.json({ user : req.user});
+})
 
 app.post("/admin/courses", authenticateJwt, async (req, res) => {
   const course = new Course(req.body);
